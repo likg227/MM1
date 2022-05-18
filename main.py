@@ -4,11 +4,12 @@ import math
 
 class Simulation:
 
-    def __init__(self, lam, mu):
+    def __init__(self, lam, mu, capacity):
         self.num_jobs = 0
         self.curr_time = 0.0
         self.lam = lam
         self.mu = mu
+        self.capacity = capacity
 
         self.total_customer = 0
         self.total_arrive_time = 0.0
@@ -25,11 +26,12 @@ class Simulation:
         self.jobs_mul_time += self.num_jobs * interval
         self.curr_time += interval
 
-        if self.is_arrive():
+        is_arrive = self.is_arrive()
+        if is_arrive and self.num_jobs <= capacity:
             self.num_jobs += 1
             self.total_customer += 1
             self.total_arrive_time += self.curr_time
-        elif self.num_jobs > 0:
+        elif not is_arrive and self.num_jobs > 0:
             self.num_jobs -= 1
             self.total_leave_time += self.curr_time
             self.total_service_time += interval
@@ -64,8 +66,9 @@ if __name__ == '__main__':
     lam = 1.0
     mu = 1.1
     count = 10
+    capacity = 20
     for i in range(0, count):
-        simulation = Simulation(lam, mu)
+        simulation = Simulation(lam, mu, capacity)
         while True:
             curr_time = simulation.next()
             if curr_time > duration and simulation.is_empty():
